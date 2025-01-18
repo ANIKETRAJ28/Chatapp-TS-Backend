@@ -4,7 +4,7 @@ import { IUserResponse } from '../interface/user.interface';
 import { IUserCommunity, IUserCommunityRequest, IUserCommunityResponse } from '../interface/userCommunity.interface';
 import { BadRequest, InternalServerError } from '../util/apiResponse.util';
 
-export class UserCommunity {
+export class UserCommunityRepository {
   async createUserGroupCommunity(data: IUserCommunityRequest): Promise<IUserCommunity> {
     try {
       const userCommunity = await prisma.userCommunity.create({
@@ -174,7 +174,7 @@ export class UserCommunity {
     }
   }
 
-  async demoteUserToAdmin(userId: string, memberId: string, communityId: string): Promise<IUserCommunityResponse> {
+  async demoteUserFromAdmin(userId: string, memberId: string, communityId: string): Promise<IUserCommunityResponse> {
     try {
       const userCommunity = await prisma.userCommunity.findUnique({
         where: { userId_communityId: { userId, communityId }, isDeleted: false },

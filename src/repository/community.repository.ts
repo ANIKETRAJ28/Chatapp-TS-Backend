@@ -1,13 +1,13 @@
 import { prisma } from '../config/db.config';
 import { ICommunityRequest, ICommunityResponse } from '../interface/community.interface';
 import { InternalServerError } from '../util/apiResponse.util';
-import { UserCommunity } from './userCommunity.repository';
+import { UserCommunityRepository } from './userCommunity.repository';
 
-export class Community {
-  private userCommunity: UserCommunity;
+export class CommunityRepository {
+  private userCommunityRepository: UserCommunityRepository;
 
   constructor() {
-    this.userCommunity = new UserCommunity();
+    this.userCommunityRepository = new UserCommunityRepository();
   }
 
   async createGroupCommunity(data: ICommunityRequest, userId: string): Promise<ICommunityResponse> {
@@ -16,7 +16,7 @@ export class Community {
         const randomId = Math.floor(Math.random() * 53) + 1;
         const avatar = `https://xsgames.co/randomusers/assets/avatars/pixel/${randomId}.jpg`;
         const community = await prisma.community.create({ data: { ...data, avatar, type: 'group' } });
-        await this.userCommunity.createUserGroupCommunity({ userId, communityId: community.id });
+        await this.userCommunityRepository.createUserGroupCommunity({ userId, communityId: community.id });
         return community;
       });
     } catch (error) {
@@ -32,8 +32,8 @@ export class Community {
     try {
       return await prisma.$transaction(async (prisma) => {
         const community = await prisma.community.create({ data: { type: 'friend' } });
-        await this.userCommunity.createUserGroupCommunity({ userId, communityId: community.id });
-        await this.userCommunity.createUserGroupCommunity({ userId: friendId, communityId: community.id });
+        await this.userCommunityRepository.createUserGroupCommunity({ userId, communityId: community.id });
+        await this.userCommunityRepository.createUserGroupCommunity({ userId: friendId, communityId: community.id });
         return community;
       });
     } catch (error) {

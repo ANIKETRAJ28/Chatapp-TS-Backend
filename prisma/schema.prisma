@@ -25,26 +25,25 @@ model User {
 }
 
 model Community {
-  id                String             @id @default(uuid())
-  name              String?
-  description       String?
-  avatar            String?
-  type              CommunityType
-  messages          Message[]
-  users             UserCommunity[]
-  communityMessages CommunityMessage[]
+  id          String          @id @default(uuid())
+  name        String?
+  description String?
+  avatar      String?
+  type        CommunityType
+  messages    Message[]
+  users       UserCommunity[]
 }
 
 model Message {
-  id                String             @id @default(uuid())
-  content           String
-  type              MessageType
-  timestamp         DateTime           @default(now())
-  comminityId       String
-  userId            String
-  user              User               @relation(fields: [userId], references: [id])
-  community         Community          @relation(fields: [comminityId], references: [id])
-  communityMessages CommunityMessage[]
+  id          String      @id @default(uuid())
+  content     String
+  type        MessageType
+  timestamp   DateTime    @default(now())
+  communityId String
+  userId      String
+  isDeleted   Boolean     @default(false)
+  user        User        @relation(fields: [userId], references: [id])
+  community   Community   @relation(fields: [communityId], references: [id])
 }
 
 model UserCommunity {
@@ -58,14 +57,6 @@ model UserCommunity {
   community    Community @relation(fields: [communityId], references: [id])
 
   @@unique([userId, communityId])
-}
-
-model CommunityMessage {
-  id          String    @id @default(uuid())
-  messageId   String
-  communityId String
-  message     Message   @relation(fields: [messageId], references: [id])
-  community   Community @relation(fields: [communityId], references: [id])
 }
 
 enum MessageType {
