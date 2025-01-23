@@ -12,13 +12,11 @@ export class CommunityRepository {
 
   async createGroupCommunity(data: ICommunityRequest, userId: string): Promise<ICommunityResponse> {
     try {
-      return await prisma.$transaction(async (prisma) => {
-        const randomId = Math.floor(Math.random() * 53) + 1;
-        const avatar = `https://xsgames.co/randomusers/assets/avatars/pixel/${randomId}.jpg`;
-        const community = await prisma.community.create({ data: { ...data, avatar, type: 'group' } });
-        await this.userCommunityRepository.createUserGroupCommunity({ userId, communityId: community.id });
-        return community;
-      });
+      const randomId = Math.floor(Math.random() * 53) + 1;
+      const avatar = `https://xsgames.co/randomusers/assets/avatars/pixel/${randomId}.jpg`;
+      const community = await prisma.community.create({ data: { ...data, avatar, type: 'group' } });
+      await this.userCommunityRepository.createUserGroupCommunity({ userId, communityId: community.id });
+      return community;
     } catch (error) {
       if (error instanceof Error) {
         throw new InternalServerError(error.message);

@@ -1,6 +1,5 @@
 import { prisma } from '../config/db.config';
 import { ICommunityResponse } from '../interface/community.interface';
-import { IUserResponse } from '../interface/user.interface';
 import { IUserCommunity, IUserCommunityRequest, IUserCommunityResponse } from '../interface/userCommunity.interface';
 import { BadRequest, InternalServerError } from '../util/apiResponse.util';
 
@@ -45,6 +44,16 @@ export class UserCommunityRepository {
       if (!userCommunity.isAdmin) {
         throw new BadRequest('User is not an admin');
       }
+      const memberCommunity = await prisma.userCommunity.update({
+        where: { userId_communityId: { userId: memberId, communityId }, isDeleted: true },
+        data: {
+          isDeleted: false,
+        },
+        include: {
+          user: true,
+        },
+      });
+      if (memberCommunity) return memberCommunity;
       const createdCommunity = await prisma.userCommunity.create({
         data: {
           userId: memberId,
@@ -105,7 +114,11 @@ export class UserCommunityRepository {
       }
       const deletedCommunity = await prisma.userCommunity.update({
         where: { id: memberCommunity.id },
-        data: { isDeleted: true },
+        data: {
+          isDeleted: true,
+          isAdmin: false,
+          isSuperAdmin: false,
+        },
         include: {
           user: true,
         },
@@ -141,7 +154,7 @@ export class UserCommunityRepository {
       if (!userCommunity) throw new BadRequest('User doesnot belogn to the group');
       if (!userCommunity.isAdmin) throw new BadRequest('User is not admin of thew group');
       const memberCommunity = await prisma.userCommunity.findUnique({
-        where: { userId_communityId: { userId: memberId, communityId } },
+        where: { userId_communityId: { userId: memberId, communityId }, isDeleted: false },
       });
       if (!memberCommunity) throw new BadRequest('Member is not in the group');
       if (memberCommunity.isAdmin) throw new BadRequest('Member is an admin of the group');
@@ -182,7 +195,7 @@ export class UserCommunityRepository {
       if (!userCommunity) throw new BadRequest('User doesnot belogn to the group');
       if (!userCommunity.isAdmin) throw new BadRequest('User is not admin of thew group');
       const memberCommunity = await prisma.userCommunity.findUnique({
-        where: { userId_communityId: { userId: memberId, communityId } },
+        where: { userId_communityId: { userId: memberId, communityId }, isDeleted: false },
       });
       if (!memberCommunity) throw new BadRequest('Member is not in the group');
       if (memberCommunity.isSuperAdmin) throw new BadRequest('Member is super admin of the group');
@@ -251,27 +264,35 @@ export class UserCommunityRepository {
     }
   }
 
-  async getCommunityMembers(communityId: string): Promise<IUserResponse[]> {
+  async getCommunityMembers(communityId: string): Promise<IUserCommunityResponse[]> {
     try {
-      const userCommunities = await prisma.userCommunity.findMany({ where: { communityId, isDeleted: false } });
-      const users = await Promise.all(
-        userCommunities.map(async (usrCommunity) =>
-          prisma.user.findUnique({
-            where: { id: usrCommunity.userId },
-          }),
-        ),
-      );
-      return users
-        .filter((user) => user !== null)
-        .map((user): IUserResponse => {
-          return {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            username: user.username,
-            avatar: user.avatar,
-          };
-        });
+      const userCommunities = await prisma.userCommunity.findMany({
+        where: {
+          communityId,
+          isDeleted: false,
+        },
+        include: {
+          user: true,
+        },
+      });
+      const users = userCommunities.filter((user) => {
+        return {
+          id: user.id,
+          userId: user.userId,
+          communityId: user.communityId,
+          isAdmin: user.isAdmin,
+          isSuperAdmin: user.isSuperAdmin,
+          isDeleted: user.isDeleted,
+          user: {
+            id: user.user.id,
+            name: user.user.name,
+            username: user.user.username,
+            email: user.user.email,
+            avatar: user.user.avatar,
+          },
+        };
+      });
+      return users;
     } catch (error) {
       if (error instanceof Error) {
         throw new InternalServerError(error.message);
