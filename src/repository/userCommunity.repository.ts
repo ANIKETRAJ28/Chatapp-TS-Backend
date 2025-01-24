@@ -232,15 +232,23 @@ export class UserCommunityRepository {
     try {
       const userCommunities = await prisma.userCommunity.findMany({ where: { userId, isDeleted: false } });
       const communities = await Promise.all(
-        userCommunities.map(async (usrCommunity) =>
-          prisma.community.findUnique({
-            where: { id: usrCommunity.communityId },
-            include: {
-              _count: {
-                select: { users: true },
+        userCommunities.map(
+          async (usrCommunity: {
+            communityId: string;
+            id: string;
+            userId: string;
+            isAdmin: boolean | null;
+            isSuperAdmin: boolean | null;
+            isDeleted: boolean;
+          }) =>
+            prisma.community.findUnique({
+              where: { id: usrCommunity.communityId },
+              include: {
+                _count: {
+                  select: { users: true },
+                },
               },
-            },
-          }),
+            }),
         ),
       );
       const allCommunities = communities
