@@ -1,13 +1,14 @@
 import { Server } from 'socket.io';
+import { FORNTEND_URL } from './config/env.config';
 
 let io: Server | null = null;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const initSocket = (server: any) => {
+export const initSocket = (server: any): void => {
   io = new Server(server, {
     pingTimeout: 60000,
     cors: {
-      origin: 'http://localhost:5173',
+      origin: FORNTEND_URL,
       credentials: true,
     },
   });
