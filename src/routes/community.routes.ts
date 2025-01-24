@@ -14,4 +14,4 @@ communityRouter.post('/:communityId/add/:memberId', userCommunityController.addU
 communityRouter.post('/:communityId/remove/:memberId', userCommunityController.removeUserFromCommunity);
 communityRouter.post('/:communityId/promote/:memberId', userCommunityController.promoteUserToAdmin);
 communityRouter.post('/:communityId/demote/:memberId', userCommunityController.demoteUserFromAdmin);
-communityRouter.post('/friend', communityController.createFriendCommunity);
+communityRouter.post('/friend/:friendId', communityController.createFriendCommunity);

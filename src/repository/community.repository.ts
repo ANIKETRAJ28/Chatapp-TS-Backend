@@ -28,12 +28,10 @@ export class CommunityRepository {
 
   async createFriendCommunity(userId: string, friendId: string): Promise<ICommunityResponse> {
     try {
-      return await prisma.$transaction(async (prisma) => {
-        const community = await prisma.community.create({ data: { type: 'friend' } });
-        await this.userCommunityRepository.createUserGroupCommunity({ userId, communityId: community.id });
-        await this.userCommunityRepository.createUserGroupCommunity({ userId: friendId, communityId: community.id });
-        return community;
-      });
+      const community = await prisma.community.create({ data: { type: 'friend' } });
+      await this.userCommunityRepository.createUserGroupCommunity({ userId, communityId: community.id });
+      await this.userCommunityRepository.createUserGroupCommunity({ userId: friendId, communityId: community.id });
+      return community;
     } catch (error) {
       if (error instanceof Error) {
         throw new InternalServerError(error.message);

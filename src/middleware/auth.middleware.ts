@@ -7,14 +7,14 @@ export function jwtMiddleware(req: Request, res: Response, next: NextFunction): 
   try {
     const jwtCookie = req.cookies['JWT'];
     if (!jwtCookie) {
-      throw new Error('User not authenticated');
+      throw new Unauthorized('User not authenticated');
     }
     const decodedToken = jwt.decode(jwtCookie);
     if (!decodedToken || typeof decodedToken === 'string' || !decodedToken.exp) {
       throw new Error('User not authenticated');
     }
     if (decodedToken.exp * 1000 < Date.now()) {
-      throw new Error('User not authenticated');
+      throw new Unauthorized('User not authenticated');
     }
     const tokenData = decodedToken as unknown as IJWT;
 
@@ -33,7 +33,7 @@ export function getUserInfo(req: Request, res: Response): void {
   try {
     const jwtCookie = req.cookies['JWT'];
     if (!jwtCookie) {
-      throw new Error('User not authenticated');
+      throw new Unauthorized('User not authenticated');
     }
     const decodedToken = jwt.decode(jwtCookie);
     if (!decodedToken) {

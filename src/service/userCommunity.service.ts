@@ -1,4 +1,4 @@
-import { ICommunityResponse } from '../interface/community.interface';
+import { ICommunityFriendResponse, ICommunityResponse } from '../interface/community.interface';
 import { IUserCommunityResponse } from '../interface/userCommunity.interface';
 import { UserCommunityRepository } from '../repository/userCommunity.repository';
 
@@ -28,7 +28,7 @@ export class UserCommunityService {
   async demoteUserFromAdmin(userId: string, memberId: string, communityId: string): Promise<IUserCommunityResponse> {
     return this.userCommunityRepository.demoteUserFromAdmin(userId, memberId, communityId);
   }
-  async getUserCommunities(userId: string): Promise<ICommunityResponse[]> {
+  async getUserCommunities(userId: string): Promise<(ICommunityResponse | ICommunityFriendResponse)[]> {
     return this.userCommunityRepository.getUserCommunities(userId);
   }
 

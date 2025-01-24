@@ -1,4 +1,5 @@
 import { TCommunity } from '../types/community.types';
+import { IUserResponse } from './user.interface';
 
 export interface ICommunity {
   id: string;
@@ -14,6 +15,13 @@ export interface ICommunityResponse {
   description: string | null;
   avatar: string | null;
   type: TCommunity;
+  users?: number;
+}
+
+export interface ICommunityFriendResponse {
+  id: string;
+  type: TCommunity;
+  friend: IUserResponse;
   users?: number;
 }
 

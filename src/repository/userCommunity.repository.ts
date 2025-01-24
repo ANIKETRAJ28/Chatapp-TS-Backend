@@ -1,5 +1,5 @@
 import { prisma } from '../config/db.config';
-import { ICommunityResponse } from '../interface/community.interface';
+import { ICommunityFriendResponse, ICommunityResponse } from '../interface/community.interface';
 import { IUserCommunity, IUserCommunityRequest, IUserCommunityResponse } from '../interface/userCommunity.interface';
 import { BadRequest, InternalServerError } from '../util/apiResponse.util';
 
@@ -228,7 +228,7 @@ export class UserCommunityRepository {
     }
   }
 
-  async getUserCommunities(userId: string): Promise<ICommunityResponse[]> {
+  async getUserCommunities(userId: string): Promise<(ICommunityResponse | ICommunityFriendResponse)[]> {
     try {
       const userCommunities = await prisma.userCommunity.findMany({ where: { userId, isDeleted: false } });
       const communities = await Promise.all(
@@ -243,7 +243,7 @@ export class UserCommunityRepository {
           }),
         ),
       );
-      return communities
+      const allCommunities = communities
         .filter((community) => community !== null)
         .map((community): ICommunityResponse => {
           return {
@@ -255,6 +255,23 @@ export class UserCommunityRepository {
             users: community._count.users,
           };
         });
+      const resolvedCommunities = await Promise.all(
+        allCommunities.map(async (community) => {
+          if (community.type === 'friend') {
+            const communityWithMembers = await this.getCommunityMembers(community.id);
+            const members = communityWithMembers.map((community) => community.user);
+            const friends = members.filter((member) => member.id !== userId);
+            return {
+              id: community.id,
+              type: community.type,
+              friend: friends[0],
+              users: community.users,
+            };
+          }
+          return community;
+        }),
+      );
+      return resolvedCommunities;
     } catch (error) {
       if (error instanceof Error) {
         throw new InternalServerError(error.message);
@@ -275,7 +292,7 @@ export class UserCommunityRepository {
           user: true,
         },
       });
-      const users = userCommunities.filter((user) => {
+      const users = userCommunities.map((user) => {
         return {
           id: user.id,
           userId: user.userId,

@@ -35,13 +35,13 @@ export class CommunityController {
 
   createFriendCommunity = async (req: Request, res: Response): Promise<void> => {
     try {
-      const friendId = req.query.friendId;
+      const friendId = req.params.friendId;
       const userId = req.id;
       if (!userId) {
         sendResponse(res, new Unauthorized('User not authorized'));
         return;
       }
-      if (!friendId || typeof friendId !== 'string') {
+      if (!friendId) {
         sendResponse(res, new BadRequest('Friend Id required to be friend'));
         return;
       }
