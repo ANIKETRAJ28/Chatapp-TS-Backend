@@ -3,6 +3,7 @@ import { PORT } from './config/env.config';
 import cookieParser from 'cookie-parser';
 import { apiRouter } from './routes/index.routes';
 import cors from 'cors';
+import { initSocket } from './socket';
 
 const app: Express = express();
 
@@ -23,6 +24,8 @@ app.get('/', (_: Request, res: Response) => {
   res.send('Alive...');
 });
 
-app.listen(PORT, async () => {
+const server = app.listen(PORT, async () => {
   console.log(`Server running on PORT ${PORT}`);
 });
+
+initSocket(server);

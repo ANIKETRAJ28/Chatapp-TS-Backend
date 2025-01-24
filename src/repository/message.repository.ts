@@ -1,5 +1,6 @@
 import { prisma } from '../config/db.config';
 import { IMessageRequest, IMessageResponse } from '../interface/message.interface';
+import { getIO } from '../socket';
 import { InternalServerError, NotFound } from '../util/apiResponse.util';
 
 export class MessageRepository {
@@ -11,6 +12,8 @@ export class MessageRepository {
           user: true,
         },
       });
+      const io = getIO();
+      io.to(data.communityId).emit('message recieved', message);
       return message;
     } catch (error) {
       if (error instanceof Error) {
