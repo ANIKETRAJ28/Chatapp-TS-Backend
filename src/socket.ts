@@ -4,7 +4,7 @@ import { FORNTEND_URL } from './config/env.config';
 let io: Server | null = null;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const initSocket = (server: any): void => {
+export const initSocket = (server: any): Server | null => {
   io = new Server(server, {
     pingTimeout: 60000,
     cors: {
