@@ -11,6 +11,7 @@ import {
 } from '../util/apiResponse.util';
 import { createJWTtoken } from '../util/jwt.util';
 import { AuthService } from '../service/auth.service';
+import { FORNTEND_URL } from '../config/env.config';
 
 export class AuthController {
   private userService: UserService;
@@ -28,11 +29,11 @@ export class AuthController {
       const user = await this.userService.createUser(userPayload);
       const token = createJWTtoken(user);
       const options = {
-        domain: 'localhost', // Can be changed for a production domain
+        domain: FORNTEND_URL, // Can be changed for a production domain
         maxAge: 1000 * 60 * 60 * 24, // 1 day in ms
         httpOnly: true, // For security, use true if not needed in JS
-        secure: false, // Use true only for production (HTTPS)
-        sameSite: 'lax', // Change to 'None' for production with HTTPS
+        secure: true, // Use true only for production (HTTPS)
+        sameSite: 'none', // Change to 'None' for production with HTTPS
         path: '/',
       } as CookieOptions;
       res.cookie('JWT', token, options);
@@ -61,11 +62,11 @@ export class AuthController {
       const token = await this.authService.signInByEmail(email, password);
 
       const options = {
-        domain: 'localhost', // Can be changed for a production domain
+        domain: FORNTEND_URL, // Can be changed for a production domain
         maxAge: 1000 * 60 * 60 * 24, // 1 day in ms
         httpOnly: true, // For security, use true if not needed in JS
-        secure: false, // Use true only for production (HTTPS)
-        sameSite: 'lax', // Change to 'None' for production with HTTPS
+        secure: true, // Use true only for production (HTTPS)
+        sameSite: 'none', // Change to 'None' for production with HTTPS
         path: '/',
       } as CookieOptions;
       res.cookie('JWT', token, options);
@@ -93,11 +94,11 @@ export class AuthController {
       }
       const token = await this.authService.signInByUsername(username, password);
       const options = {
-        domain: 'localhost', // Can be changed for a production domain
+        domain: FORNTEND_URL, // Can be changed for a production domain
         maxAge: 1000 * 60 * 60 * 24, // 1 day in ms
         httpOnly: true, // For security, use true if not needed in JS
-        secure: false, // Use true only for production (HTTPS)
-        sameSite: 'lax', // Change to 'None' for production with HTTPS
+        secure: true, // Use true only for production (HTTPS)
+        sameSite: 'none', // Change to 'None' for production with HTTPS
         path: '/',
       } as CookieOptions;
       res.cookie('JWT', token, options);
