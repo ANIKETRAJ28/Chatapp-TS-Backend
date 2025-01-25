@@ -93,4 +93,31 @@ export class UserRepository {
       }
     }
   }
+
+  async findUserWithQuery(query: string): Promise<IUserResponse[]> {
+    try {
+      const users = await prisma.user.findMany({
+        where: {
+          OR: [
+            { username: { startsWith: query } },
+            { username: { endsWith: query } },
+            { username: { contains: query } },
+          ],
+        },
+      });
+      return users.map((user) => ({
+        id: user.id,
+        name: user.name,
+        username: user.name,
+        email: user.email,
+        avatar: user.avatar,
+      }));
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new InternalServerError(error.message);
+      } else {
+        throw new InternalServerError('An unknown error occurred', error);
+      }
+    }
+  }
 }

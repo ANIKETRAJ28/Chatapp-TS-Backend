@@ -14,9 +14,12 @@ export const initSocket = (server: any): Server | null => {
   });
 
   io.on('connection', (socket) => {
+    socket.on('self join', (id) => {
+      socket.join(id);
+    });
+
     socket.on('setup', (id) => {
       socket.join(id);
-      console.log(`User joined room: ${id}`);
       socket.emit('connected');
     });
 

@@ -78,4 +78,22 @@ export class UserController {
       }
     }
   };
+
+  findUserWithQuery = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const query = req.query.query;
+      if (!query || typeof query !== 'string') {
+        sendResponse(res, new BadRequest('Query required'));
+        return;
+      }
+      const user = await this.userService.findUserWithQuery(query);
+      sendResponse(res, new Created('Users found successfully', user));
+    } catch (error) {
+      if (error instanceof Error) {
+        sendResponse(res, new InternalServerError('Error', error.message));
+      } else {
+        sendResponse(res, new Unauthorized('Error', error));
+      }
+    }
+  };
 }

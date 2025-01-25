@@ -23,4 +23,8 @@ export class UserService {
   async findUserByUsername(username: string): Promise<IUserResponse> {
     return this.userRepository.findUserByUsername(username);
   }
+
+  async findUserWithQuery(query: string): Promise<IUserResponse[]> {
+    return this.userRepository.findUserWithQuery(query);
+  }
 }

@@ -1,4 +1,4 @@
-import { ICommunityRequest, ICommunityResponse } from '../interface/community.interface';
+import { ICommunityFriendResponse, ICommunityRequest, ICommunityResponse } from '../interface/community.interface';
 import { CommunityRepository } from '../repository/community.repository';
 
 export class CommunityService {
@@ -12,7 +12,7 @@ export class CommunityService {
     return this.communityRepository.createGroupCommunity(data, userId);
   }
 
-  async createFriendCommunity(userId: string, friendId: string): Promise<ICommunityResponse> {
+  async createFriendCommunity(userId: string, friendId: string): Promise<ICommunityFriendResponse> {
     return this.communityRepository.createFriendCommunity(userId, friendId);
   }
 }

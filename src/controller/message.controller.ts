@@ -21,7 +21,7 @@ export class MessageController {
     try {
       const userId = req.id;
       if (!userId) throw new Unauthorized('User not authenticated');
-      const messagePayload: Omit<IMessageRequest, 'userId'> = req.body.message;
+      const messagePayload: Omit<IMessageRequest & { communityType: string | undefined }, 'userId'> = req.body.message;
       if (!messagePayload) {
         sendResponse(res, new BadRequest('Insufficient data to create message'));
         return;

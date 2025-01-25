@@ -7,6 +7,7 @@ const userController = new UserController();
 export const userRouter = Router();
 
 userRouter.post('/', userController.createUser);
+userRouter.get('/search', userController.findUserWithQuery);
 userRouter.get('/', (req: Request, res: Response) => {
   const { email, username, id } = req.query;
   if (email) {
