@@ -28,7 +28,7 @@ export class AuthController {
       const user = await this.userService.createUser(userPayload);
       const token = createJWTtoken(user);
       const options = {
-        domain: '*', // Can be changed for a production domain
+        // domain: '*', // Can be changed for a production domain
         maxAge: 1000 * 60 * 60 * 24, // 1 day in ms
         httpOnly: true, // For security, use true if not needed in JS
         secure: true, // Use true only for production (HTTPS)
@@ -61,7 +61,7 @@ export class AuthController {
       const token = await this.authService.signInByEmail(email, password);
 
       const options = {
-        domain: '*', // Can be changed for a production domain
+        // domain: '*', // Can be changed for a production domain
         maxAge: 1000 * 60 * 60 * 24, // 1 day in ms
         httpOnly: true, // For security, use true if not needed in JS
         secure: true, // Use true only for production (HTTPS)
@@ -93,7 +93,7 @@ export class AuthController {
       }
       const token = await this.authService.signInByUsername(username, password);
       const options = {
-        domain: '*', // Can be changed for a production domain
+        // domain: '*', // Can be changed for a production domain
         maxAge: 1000 * 60 * 60 * 24, // 1 day in ms
         httpOnly: true, // For security, use true if not needed in JS
         secure: true, // Use true only for production (HTTPS)
