@@ -300,10 +300,9 @@ export class UserCommunityRepository {
           user: true,
         },
       });
-      const users: IUserCommunityResponse[] = userCommunities.map((user) => {
+      const users: IUserCommunityResponse[] = userCommunities.map((user: IUserCommunityResponse) => {
         return {
           id: user.id,
-          userId: user.userId,
           communityId: user.communityId,
           isAdmin: user.isAdmin,
           isSuperAdmin: user.isSuperAdmin,
