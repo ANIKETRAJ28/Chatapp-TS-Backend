@@ -1,6 +1,6 @@
 import { prisma } from '../config/db.config';
 import { SALT } from '../config/env.config';
-import { IUserRequest, IUserResponse } from '../interface/user.interface';
+import { IUser, IUserRequest, IUserResponse } from '../interface/user.interface';
 import bcrypt from 'bcrypt';
 import { InternalServerError, NotFound } from '../util/apiResponse.util';
 
@@ -96,7 +96,7 @@ export class UserRepository {
 
   async findUserWithQuery(query: string): Promise<IUserResponse[]> {
     try {
-      const users = await prisma.user.findMany({
+      const users: IUser[] = await prisma.user.findMany({
         where: {
           OR: [
             { username: { startsWith: query } },
